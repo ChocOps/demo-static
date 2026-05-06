@@ -1,11 +1,32 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [motd, setMotd] = useState('This is a static website demo')
+
+  async function fetchMotd() {
+    try {
+      const res = await fetch(import.meta.env.VITE_MOTD_URL)
+      if (!res.ok) throw new Error()
+      const data = await res.json()
+      setMotd(data.motd)
+    } catch {
+      setMotd('This is a static website demo')
+    }
+  }
+
+  useEffect(() => {
+    fetch(import.meta.env.VITE_MOTD_URL)
+      .then((res) => {
+        if (!res.ok) throw new Error()
+        return res.json()
+      })
+      .then((data) => setMotd(data.motd))
+      .catch(() => setMotd('This is a static website demo'))
+  }, [])
 
   return (
     <section id="center">
@@ -16,15 +37,8 @@ function App() {
       </div>
       <div>
         <h1>ChocOps</h1>
-        <p>This is a static website demo</p>
+        <p onClick={fetchMotd} style={{ cursor: 'pointer' }}>{motd}</p>
       </div>
-      <button
-        type="button"
-        className="counter"
-        onClick={() => setCount((count) => count + 1)}
-      >
-        Count is {count}
-      </button>
     </section>
   )
 }

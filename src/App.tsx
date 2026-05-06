@@ -5,11 +5,12 @@ import heroImg from './assets/hero.png'
 import './App.css'
 
 function App() {
-  const [motd, setMotd] = useState('This is a static website demo')
+  const title = import.meta.env.VITE_TITLE || 'ChocOps'
+  const [motd, setMotd] = useState(`Don't Panic.`)
 
   async function fetchMotd() {
     try {
-      const res = await fetch(import.meta.env.VITE_MOTD_URL)
+      const res = await fetch(import.meta.env.VITE_FETCH)
       if (!res.ok) throw new Error()
       const data = await res.json()
       setMotd(data.motd)
@@ -19,7 +20,7 @@ function App() {
   }
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_MOTD_URL)
+    fetch(import.meta.env.VITE_FETCH)
       .then((res) => {
         if (!res.ok) throw new Error()
         return res.json()
@@ -36,7 +37,7 @@ function App() {
         <img src={viteLogo} className="vite" alt="Vite logo" />
       </div>
       <div>
-        <h1>ChocOps</h1>
+        <h1>{title}</h1>
         <p onClick={fetchMotd} style={{ cursor: 'pointer' }}>{motd}</p>
       </div>
     </section>
